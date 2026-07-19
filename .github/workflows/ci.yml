@@ -1,0 +1,30 @@
+name: Validar infraestructura
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar variables de prueba
+        run: cp .env.example .env
+
+      - name: Validar Docker Compose
+        run: docker compose config --quiet
+
+      - name: Verificar archivos requeridos
+        run: |
+          test -f compose.yaml
+          test -f nginx/default.conf
+          test -f certificados/wordpress.crt
+          test -f .env.example
